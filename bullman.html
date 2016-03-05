@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+var str1;
+var str2;
+var words=[];
+var count=0;
+var load=0;
+var win=0;
+function bullmanFeed()
+{
+    var feedRead;
+    feedRead=new XMLHttpRequest();
+    feedRead.open("GET","https://raw.githubusercontent.com/sarthi92/Text-Feed-Server/master/bullman_ajax.txt",false);
+    feedRead.send();
+    str1=feedRead.responseText;
+    document.getElementById("control").innerHTML="Enter word to check...";
+    load=1;
+    str2="";
+    for(var key=0;key<str1.length;++key)
+    {
+        if(str1[key]==str1[4]){words.push(str2);str2="";}
+        else{str2+=str1[key];}
+    }
+    words.push(str2);
+    }
+function bullmanSelect()
+{
+    str2=words[Math.floor(Math.random()*360)];
+}
+function returnResult()
+{
+    if(load==0||count==10||win==1){return 0;}
+    count++;
+    str1=document.getElementById("word").value;
+    str1=str1.toUpperCase();
+    document.getElementById("word").value="";
+    var grade="";
+    var flag=0;
+    for(var h=0;h!=4;++h)
+    for(var l=h+1;l!=4;++l)
+    {
+        if(str1[h]==str1[l]){flag=1;}
+    }
+    if(flag==1)
+    {
+        document.getElementById("result").innerHTML+=" ";
+        if(count!=10)
+        {document.getElementById("result").innerHTML+="0";}
+        document.getElementById("result").innerHTML+=String(count)+". "+str1+" PENALTY!"+"<br/>";
+    }
+    else{
+    //Checking Area
+    for(var j=0;j!=4;j++)
+    {
+        if(str1[j]==str2[j]){grade+="B";}
+        else
+        {
+            for(var k=0;j!=k,k!=4;k++)
+            {
+                if(str1[j]==str2[k]){grade+="C";break;}
+            }
+        }
+    }
+    if(grade==""){grade=" 0";}
+    document.getElementById("result").innerHTML+=" ";
+    if(count!=10)
+    {document.getElementById("result").innerHTML+="0";}
+    document.getElementById("result").innerHTML+=String(count)+". "+str1+" "+grade+"<br/>";
+    if(grade=="BBBB")
+    {
+        document.getElementById("final").innerHTML="You WIN!!";
+        win=1;
+        document.getElementById("control").innerHTML="Bullman Online &copy;Capsule Corp. 2015";
+    }
+    }
+    if(count==10&&grade!="BBBB")
+    {
+        document.getElementById("final").innerHTML="You LOSE! Word was: "+str2;
+        document.getElementById("control").innerHTML="Bullman Online &copy;Capsule Corp. 2015";
+    }
+}
+function tryAgain()
+{
+    count=0;
+    win=0;
+    if(load==0){bullmanFeed();}
+    else
+    {
+        document.getElementById("result").innerHTML="";
+        document.getElementById("final").innerHTML="";
+        document.getElementById("control").innerHTML="Enter word to check...";
+    }
+    bullmanSelect();
+}
+</script>
+<style>
+    #total
+    {
+        width:300px;
+    }
+    #start
+    {
+        width:300px;
+        height:30px;
+        float:top;
+    }
+    #control
+    {
+        width:300px;
+        height:30px;
+        background:#006666;
+        color:white;
+        font-family:"Calibri";
+        font-size:18px;
+        float:top;
+    }
+    #word
+    {
+        width:296px;
+        height:24px;
+        float:top;
+    }
+    #check
+    {
+        width:300px;
+        height:30px;
+        float:top;
+    }
+    #result
+    {
+        width:300px;
+        height:200px;
+        background:#006666;
+        color:white;
+        font-family:"Calibri";
+        font-size:14px;
+        float:top;
+    }
+    #final
+    {
+        width:300px;
+        height:30px;
+        background:#006666;
+        color:white;
+        font-family:"Calibri";
+        font-size:15px;
+        float:top;
+    }
+    #rules
+    {
+        width:296px;
+        height:140px;
+        background:white;
+        color:black;
+        border:2px solid #006666;
+        font-family:"Calibri";
+        font-size:14px;
+        float:top;
+    }
+</style>
+</head>
+<body>
+<div id="total">
+<button id="start" type="button" onclick="tryAgain()">Give me New Word</button>
+<div id="control">Bullman Online &copy;Capsule Corp. 2015</div>
+<input id="word" type="text" />
+<button id="check" type="button" onclick="returnResult()">Check</button>
+<div id="result"></div>
+<div id="final"></div>
+<div id="rules">A 4-letter singular, meaningful word without letter-repetition is given. Your aim is to guess the word in 10 tries. For each try, a grade is given as follows: Each B means a Letter match and at correct place. Each C means a Letter match but at wrong place. 0 means no Letter match. Penalty for Letter-repitition, etc.</div>
+</div>
+</body>
+</html>
